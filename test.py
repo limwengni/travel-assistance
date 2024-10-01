@@ -9,8 +9,8 @@ mistral_pipeline = pipeline("text-generation", model="alexsherstinsky/Mistral-7B
 pad_token_id = mistral_pipeline.model.config.eos_token_id
 
 def ask_question(user_input):
-    # Generate a response using the Mistral pipeline
-    mistral_response = mistral_pipeline(user_input, max_length=450, num_return_sequences=1, truncation=True, pad_token_id=pad_token_id)
+    # Generate a response using the Mistral pipeline with reduced max_length
+    mistral_response = mistral_pipeline(user_input, max_length=150, num_return_sequences=1, truncation=True, pad_token_id=pad_token_id)
 
     # Extract the generated text
     answer = mistral_response[0]['generated_text']
