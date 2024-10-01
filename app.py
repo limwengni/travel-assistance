@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify, render_template
-from transformers import AutoTokenizer, AutoModelForCausalLM, BertTokenizer, BertModel
-import torch
+from transformers import AutoTokenizer, BertTokenizer, BertModel, pipeline
 
 app = Flask(__name__)
 
@@ -8,9 +7,8 @@ app = Flask(__name__)
 bert_tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 bert_model = BertModel.from_pretrained('bert-base-uncased')
 
-# Load Mistral 7B tokenizer and model for conversational responses
-mistral_tokenizer = AutoTokenizer.from_pretrained("mistralai/Mistral-7B-v0.1")
-mistral_model = AutoModelForCausalLM.from_pretrained("mistralai/Mistral-7B-v0.1")
+# Create a pipeline for conversational responses using Mistral 7B
+mistral_pipeline = pipeline("text-generation", model="alexsherstinsky/Mistral-7B-v0.1-sharded")
 
 @app.route('/')
 def home():
@@ -47,15 +45,11 @@ def ask():
     bert_inputs = bert_tokenizer(user_input, return_tensors='pt')
     bert_outputs = bert_model(**bert_inputs)
 
-    # Tokenize and process the input with Mistral 7B
-    mistral_inputs = mistral_tokenizer(user_input, return_tensors='pt')
+    # Generate a response using the Mistral pipeline
+    mistral_response = mistral_pipeline(user_input, max_length=150, num_return_sequences=1)
 
-    # Generate a response using Mistral 7B
-    with torch.no_grad():
-        outputs = mistral_model.generate(**mistral_inputs, max_length=150)
-
-    # Decode the generated response
-    answer = mistral_tokenizer.decode(outputs[0], skip_special_tokens=True)
+    # Extract the generated text
+    answer = mistral_response[0]['generated_text']
     
     return jsonify({'answer': answer})
 
