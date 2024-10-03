@@ -1,9 +1,16 @@
 function sendMessage() {
-    const input = document.getElementById('user-input').value;
+    const input = document.getElementById('user-input').value.trim();
     const messagesDiv = document.getElementById('messages');
 
+    if (!input) {
+        return; // Don't send an empty message
+    }
+
     // Display user message
-    messagesDiv.innerHTML += `<div class="message user">${input}</div>`;
+    const userMessage = document.createElement('div');
+    userMessage.classList.add('message', 'user');
+    userMessage.innerText = input;
+    messagesDiv.appendChild(userMessage);
 
     // Fetch AI response
     fetch('/ask', {
@@ -15,8 +22,17 @@ function sendMessage() {
     })
     .then(response => response.json())
     .then(data => {
-        const aiMessage = `<div class="message ai">${data.answer}</div>`;
-        messagesDiv.innerHTML += aiMessage;
-        document.getElementById('user-input').value = '';  // Clear input
-    });
+        // Display AI message
+        const aiMessage = document.createElement('div');
+        aiMessage.classList.add('message', 'ai');
+        aiMessage.innerText = data.answer;
+        messagesDiv.appendChild(aiMessage);
+
+        // Clear input field
+        document.getElementById('user-input').value = '';
+
+        // Auto-scroll to the latest message
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    })
+    .catch(error => console.error('Error:', error));
 }
