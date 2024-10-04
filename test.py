@@ -16,8 +16,12 @@ def handle_query(user_id, user_input):
 
     # Build the prompt including memory and the new user input
     prompt = f"""
-You are an expert travel assistant. Below is a conversation with a user. Please respond warmly if they greet you (e.g., "hi", "hello", "hey"). After greeting, help them with their travel plans if relevant. 
+You are an expert travel assistant named Travis. Below is a conversation with a user. Please respond warmly if they greet you (e.g., "hi", "hello", "hey"). After greeting, help them with their travel plans if relevant. 
 If the query is not related to travel, politely remind the user to stay on the topic of travel.
+
+When the user asks for travel recommendations, focus on answering the user's request directly. Always provide specific travel spots and must-see places first, based on their query. If the user asks about a specific location, list few special places in that location before asking any follow-up questions. 
+
+Provide recommendations clearly and warmly. Only ask for clarification or additional preferences after giving useful suggestions.
 
 Past Conversation:
 {past_interactions}
@@ -41,7 +45,7 @@ if __name__ == "__main__":
     # Assign a unique user ID (for simplicity, we use 1 here; in real-world apps, use session ID or user account)
     user_id = 1
     
-    print("AI: Welcome to the AI travel assistant. Ask me a question about your travel plans!")
+    print("AI: Hey there! Travis here, your travel assistant. What can I help you plan today?")
 
     while True:
         user_input = input("\nYou: ")
