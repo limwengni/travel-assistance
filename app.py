@@ -40,7 +40,7 @@ def handle_query(user_id, user_input):
     """
     
     # Send the prompt to the model
-    response = ollama.chat(model='llama3.2', messages=[{'role': 'user', 'content': prompt}]) #llama3.1
+    response = ollama.chat(model='llama3.2:1b', messages=[{'role': 'user', 'content': prompt}]) #llama3.1 llama3.2:1b
     
     # Get the AI's response
     ai_response = response['message']['content']
@@ -114,19 +114,11 @@ static_prompts = [
 
 @app.route('/api/prompts', methods=['GET'])
 def generate_prompts():
-    base_prompt = "Generate 2 short travel-related questions users can ask. Provide only the questions without any numbering or additional text. Please no numbering like 1. 2., i dont want it, i want questions only"
-    response = ollama.chat(model='llama3.2', messages=[{'role': 'user', 'content': base_prompt}])
-    
-    dynamic_prompts = response['message']['content'].split('\n')
-    
-    dynamic_prompts = [prompt for prompt in dynamic_prompts if prompt.strip()]
+    # Select 2 static prompts from the list
+    selected_static_prompts = random.sample(static_prompts, min(4, len(static_prompts)))
 
-    selected_static_prompts = random.sample(static_prompts, min(2, len(static_prompts)))
-    combined_prompts = selected_static_prompts + dynamic_prompts
-
-    combined_prompts = combined_prompts[:4]
-
-    return jsonify(combined_prompts), 200
+    # Return the static prompts as a JSON response
+    return jsonify(selected_static_prompts), 200
 
 
 @app.route('/api/message', methods=['POST'])
