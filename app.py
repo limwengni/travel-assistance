@@ -29,12 +29,9 @@ def handle_query(user_id, user_input):
     past_interactions = "\n".join(conversation_memory.get(user_id, [])[-3:])
 
     prompt = f"""
-    You are an expert travel assistant named Travis. Below is a conversation with a user. Please respond warmly if they greet you (e.g., "hi", "hello", "hey"). After greeting, help them with their travel plans if relevant. 
-    If the query is not related to travel, politely remind the user to stay on the topic of travel.
+    You are an expert travel assistant named Travis. Please respond warmly if they greet you and help them with their travel plans if relevant. If the query is not related to travel, politely remind the user to stay on the topic of travel. 
 
-    When the user asks for travel recommendations, focus on answering the user's request directly. Always provide specific travel spots and must-see places first, based on their query. If the user asks about a specific location, list few special places in that location before asking any follow-up questions. 
-
-    Provide recommendations clearly and warmly. Only ask for clarification or additional preferences after giving useful suggestions.
+    Remember, the user is asking about travel topics.
 
     Past Conversation:
     {past_interactions}
@@ -43,7 +40,7 @@ def handle_query(user_id, user_input):
     """
     
     # Send the prompt to the model
-    response = ollama.chat(model='llama3.2:1b', messages=[{'role': 'user', 'content': prompt}]) #llama3.1
+    response = ollama.chat(model='llama3.2', messages=[{'role': 'user', 'content': prompt}]) #llama3.1
     
     # Get the AI's response
     ai_response = response['message']['content']
@@ -117,8 +114,8 @@ static_prompts = [
 
 @app.route('/api/prompts', methods=['GET'])
 def generate_prompts():
-    base_prompt = "Generate 2 short example travel questions users can ask. I only want the questions; nothing else."
-    response = ollama.chat(model='llama3.1', messages=[{'role': 'user', 'content': base_prompt}])
+    base_prompt = "Generate 2 short travel-related questions users can ask. Provide only the questions without any numbering or additional text. Please no numbering like 1. 2., i dont want it, i want questions only"
+    response = ollama.chat(model='llama3.2', messages=[{'role': 'user', 'content': base_prompt}])
     
     dynamic_prompts = response['message']['content'].split('\n')
     
