@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from functools import lru_cache
 import ollama
 import random
 
@@ -24,6 +25,7 @@ def update_memory(user_id, role, content):
         conversation_memory[user_id] = conversation_memory[user_id][-10:]
 
 # Function to generate a response using Ollama, with memory included in the prompt
+@lru_cache(maxsize=500)
 def handle_query(user_id, user_input):
     # Fetch past interactions (last 3 exchanges to keep prompt size manageable)
     past_interactions = "\n".join(conversation_memory.get(user_id, [])[-3:])
@@ -40,7 +42,9 @@ def handle_query(user_id, user_input):
     """
     
     # Send the prompt to the model
-    response = ollama.chat(model='llama3.2:1b', messages=[{'role': 'user', 'content': prompt}]) #llama3.1 llama3.2:1b
+    response = ollama.chat(model='llama3.2:1b', messages=[{'role': 'user', 'content': prompt}], options={
+        "num_batch": 50
+        })
     
     # Get the AI's response
     ai_response = response['message']['content']
