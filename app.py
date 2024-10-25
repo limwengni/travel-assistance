@@ -31,14 +31,12 @@ def handle_query(user_id, user_input):
     past_interactions = "\n".join(conversation_memory.get(user_id, [])[-3:])
 
     prompt = f"""
-    You are an expert travel assistant named Travis. Please respond warmly if they greet you and help them with their travel plans if relevant. If the query is not related to travel, politely remind the user to stay on the topic of travel. 
+    You are a friendly travel assistant called Travis. If the user greets you (e.g., "Hello," "Hi," "Hey," etc.), respond warmly and continue with helpful travel information. If user didnt greet you, its fine, just jump straight to providing relevant travel advice based on the user's question. If the query isn't related to travel, gently remind the user that you're here to assist with travel-related topics.
 
-    Remember, the user is asking about travel topics.
+Past Conversation:
+{past_interactions}
 
-    Past Conversation:
-    {past_interactions}
-
-    User Query: "{user_input}"
+User Query: "{user_input}"
     """
     
     # Send the prompt to the model
@@ -56,7 +54,7 @@ def handle_query(user_id, user_input):
     return ai_response
 
 # Prompts to start conversation with the travel assistant
-static_prompts = [
+# static_prompts = [
     "What are the must-visit places in Paris?",
     "What’s so special about Tokyo?",
     "How can I plan a 3-day trip to Rome?",
@@ -114,15 +112,15 @@ static_prompts = [
     "What are the best locations for photography enthusiasts?",
     "What are some must-have travel gear for adventurers?",
     "How can I volunteer while traveling?",
-]
+# ]
 
-@app.route('/api/prompts', methods=['GET'])
-def generate_prompts():
-    # Select 2 static prompts from the list
-    selected_static_prompts = random.sample(static_prompts, min(4, len(static_prompts)))
+# @app.route('/api/prompts', methods=['GET'])
+# def generate_prompts():
+#     # Select 2 static prompts from the list
+#     selected_static_prompts = random.sample(static_prompts, min(4, len(static_prompts)))
 
-    # Return the static prompts as a JSON response
-    return jsonify(selected_static_prompts), 200
+#     # Return the static prompts as a JSON response
+#     return jsonify(selected_static_prompts), 200
 
 
 @app.route('/api/message', methods=['POST'])
